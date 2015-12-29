@@ -11,5 +11,4 @@ urlpatterns = [
     url(r'^results/(?P<result_id>[0-9]+)$', views.result_detail, name='result_detail'),
     url(r'^results/(?P<result_id>[0-9]+)/ignore$', views.result_ignore, name='result_ignore'),
     url(r'^reports/(?P<report_id>[0-9]+)/fetch$', views.report_fetch, name='report_fetch'),
-    url(r'^accounts/login/$', login, name='login')
 ]

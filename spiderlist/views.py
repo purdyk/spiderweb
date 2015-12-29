@@ -13,7 +13,6 @@ from .apis import SabAPI
 
 import re
 import json
-import logging
 
 
 @login_required
