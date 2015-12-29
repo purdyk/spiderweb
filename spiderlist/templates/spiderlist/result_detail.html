@@ -1,0 +1,15 @@
+{% extends "spiderlist/base.html" %}
+
+{% block content %}
+
+<ul>
+
+    {% for report in reports %}
+
+    <li><a href="{% url 'report_fetch' report.id %}">{{ report.name }} - {{ report.size|filesizeformat }}</a></li>
+
+    {% endfor %}
+
+</ul>
+
+{% endblock %}

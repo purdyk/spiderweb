@@ -1,0 +1,20 @@
+{% extends "spiderlist/base.html" %}
+
+{% block content %}
+
+<h2>Group contains {{ results.len }} results</h2>
+
+<ul>
+
+    {% for result in results %}
+
+    <li>
+        <a href="{% url 'result_detail' result.id %}">{{ result.name }} - {{ result.valid_reports.count }}</a> -
+        <a href="{% url 'result_ignore' result.id %}">ignore</a>
+    </li>
+
+    {% endfor %}
+
+</ul>
+
+{% endblock %}

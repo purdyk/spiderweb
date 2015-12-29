@@ -1,0 +1,22 @@
+{% extends "spiderlist/base.html" %}
+
+{% block title %}
+SpiderWeb
+{% endblock %}
+
+
+
+{% block content %}
+
+<ul>
+
+    {% for group in groups %}
+    <li>
+        <a href="{% url 'group_detail' group.id %}">{{ group.name|title }} - {{ group.valid_results.count }}</a> -
+        <a href="{% url 'group_refresh' group.id %}"> refresh</a>
+    </li>
+    {% endfor %}
+
+</ul>
+
+{% endblock %}
