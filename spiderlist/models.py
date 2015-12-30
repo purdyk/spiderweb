@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
 
-# Create your models here.
+from .apis import NabAPI
+from .apis import FCSpider
+
+import re
+import json
 
 
 class SearchGroup(models.Model):
@@ -24,11 +28,108 @@ class SearchGroup(models.Model):
     def __str__(self):
         return self.name
 
+    def refresh(self):
+        date_matcher = re.compile("(\d\d)?(\d\d)[^\d]?(\d\d)[^\d]?(\d\d)")
+
+        nabapi = NabAPI.NabAPI(date_matcher)
+        spider = FCSpider.FileSpider(date_matcher)
+
+        complete = False
+        found = []
+        new_files = []
+        offset = 0
+
+        query = self.search_string
+
+        have = spider.build_file_list(query)
+
+        for date in have:
+            path = have[date][0]
+            name = have[date][1]
+            files = MatchedFile.objects.filter(path=path)
+            if files.count() == 0:
+                file = MatchedFile(
+                    group=self,
+                    path=path,
+                    date_key=date
+                )
+                file.save()
+                new_files.append(file)
+
+                results = SearchResult.objects.filter(date_key=date)
+                if len(results) == 0:
+                    result = SearchResult(
+                        group=self,
+                        name=name,
+                        date_key=date,
+                        file=file
+                    )
+                else:
+                    result = results[0]
+                    result.file = file
+
+                result.save()
+
+        query = [query]
+
+        if len(self.additional_parameters) > 0:
+            for each in self.additional_parameters.split(' '):
+                query.append(each)
+
+        while not complete:
+            print("Doing Search ", offset)
+            incoming = nabapi.do_search(query, offset)
+
+            if len(incoming) == 0:
+                complete = True
+
+            for each in incoming:
+                print("Processing raw result guid: ", each.guid())
+                reports = Report.objects.filter(guid=each.guid())
+
+                if len(reports) == 0:
+                    found.append(each)
+                else:
+                    complete = True
+                    break
+
+            offset += 100
+
+        new_reports = []
+        new_results = []
+
+        for each in found:
+            results = SearchResult.objects.filter(date_key=each.date_key())
+
+            if len(results) == 0:
+                result = SearchResult(
+                    group=self,
+                    name=each.title(),
+                    date_key=each.date_key(),
+                )
+                result.save()
+                new_results.append(result)
+            else:
+                result = results[0]
+
+            report = Report(
+                result=result,
+                name=each.title(),
+                size=each.size(),
+                guid=each.guid(),
+            )
+            report.raw = json.dumps(each.attrs)
+            report.save()
+            new_reports.append(report)
+
+        return dict(group=self, reports=new_reports, results=new_results, files=new_files)
+
 
 class MatchedFile(models.Model):
     path = models.CharField(max_length=4000, db_index=True)
     date_key = models.CharField(max_length=20, db_index=True)
     group = models.ForeignKey(SearchGroup, on_delete=models.CASCADE)
+    missing = models.BooleanField(default=False)
 
     def __str__(self):
         return self.path
