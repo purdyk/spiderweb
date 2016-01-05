@@ -1,10 +1,10 @@
-<ul class="resultlist fa-ul">
-    {% for result in results %}
-    <li>
-        <i class="fa-li fa fa-archive"></i>
-        <a class="result-link" data="{{ result.id }}" href="#">{{ result.name }}  <span class="badge">{{ result.valid_reports.count }}</span></a> -
-        <a class="fa fa-ban" href="{% url 'result_ignore' result.id %}"></a>
-        <div class="collapse" id="result-{{ result.id }}"></div>
-    </li>
-    {% endfor %}
-</ul>
+{% for result in results %}
+<div class="card card-pad">
+    <i class="fa fa-archive fa-2x"></i>
+    <a class="result-link" data="{{ result.id }}" href="#">{{ result.clean_name }}  <span class="badge">{{ result.valid_reports.count }}</span></a> -
+    <a class="fa fa-ban" href="{% url 'result_ignore' result.id %}"></a>
+</div>
+
+<div class="collapse result" id="result-{{ result.id }}"></div>
+
+{% endfor %}

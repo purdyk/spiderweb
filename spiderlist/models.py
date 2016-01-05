@@ -154,6 +154,26 @@ class SearchResult(models.Model):
     def valid_reports(self):
         return self.report_set.filter(size__gte=settings.MINSIZE)
 
+    def clean_name(self):
+        start = self.name.find(self.date_key)
+        end = self.name.lower().index("xxx")
+
+        if start > 0:
+            start += len(self.date_key)
+
+        if start > 0 and end > 0:
+            stripped = self.name[start:end]
+        elif start > 0:
+            stripped = self.name[start]
+        else:
+            stripped = self.name
+
+        stripped = stripped.replace(".", " ")
+        if start > 0:
+            return self.date_key + " " + stripped
+        else:
+            return stripped
+
 
 class Report(models.Model):
     result = models.ForeignKey(SearchResult, on_delete=models.CASCADE)

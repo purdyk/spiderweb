@@ -8,18 +8,13 @@ SpiderWeb
 
 {% block content %}
 
-<ul class="group-list fa-ul">
-
-    {% for group in groups %}
-    <li>
-        <i class="fa-li fa fa-heartbeat"></i>
-        <a class="group-link" data="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a> -
-        <a class="fa fa-refresh" href="{% url 'group_refresh' group.id %}"></a>
-        <div class="collapse" id="group-{{ group.id }}"></div>
-    </li>
-    {% endfor %}
-
-</ul>
+{% for group in groups %}
+<div class="card card-pad">
+    <a class="group-link" data="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a> -
+    <a class="fa fa-refresh" href="{% url 'group_refresh' group.id %}"></a>
+</div>
+<div class="collapse group" id="group-{{ group.id }}"></div>
+{% endfor %}
 
 {% endblock %}
 

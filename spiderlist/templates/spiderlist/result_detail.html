@@ -1,8 +1,6 @@
-<ul class="fa-ul">
-    {% for report in reports %}
-    <li>
-        <i class="fa-li fa fa-film"></i>
-        <a href="{% url 'report_fetch' report.id %}">{{ report.name }} - {{ report.size|filesizeformat }}</a>
-    </li>
-    {% endfor %}
-</ul>
+{% for report in reports %}
+<div class="card card-pad">
+    <i class="fa fa-film fa-2x"></i>
+    <a href="{% url 'report_fetch' report.id %}">{{ report.name }} - {{ report.size|filesizeformat }}</a>
+</div>
+{% endfor %}
