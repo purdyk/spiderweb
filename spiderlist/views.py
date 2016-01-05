@@ -23,7 +23,7 @@ def index(request):
 def group_detail(request, group_id):
     group = get_object_or_404(SearchGroup, pk=group_id)
 
-    results = group.valid_results()
+    results = group.valid_results().order_by('-date_key')
 
     context = {
         'group': group,
