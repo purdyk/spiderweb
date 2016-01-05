@@ -65,11 +65,7 @@
     <!-- Content -->
     <div class="container theme-showcase" role="main">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-        {% block content %}
-        {% block object-tools %}{% endblock %}
-        {{ content }}
-        {% endblock %}
+        {% block content %}{% endblock %}
         {% block sidebar %}{% endblock %}
     </div>
     <!-- END Content -->
@@ -84,6 +80,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/controllers.js' %}"></script>
+
+{% block extrascript %}{% endblock %}
 
 </body>
 </html>

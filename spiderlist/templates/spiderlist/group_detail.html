@@ -1,20 +1,10 @@
-{% extends "spiderlist/base.html" %}
-
-{% block content %}
-
-<h2>Group contains {{ results|length }} results</h2>
-
-<ul>
-
+<ul class="resultlist fa-ul">
     {% for result in results %}
-
     <li>
-        <a href="{% url 'result_detail' result.id %}">{{ result.name }} - {{ result.valid_reports.count }}</a> -
-        <a href="{% url 'result_ignore' result.id %}">ignore</a>
+        <i class="fa-li fa fa-archive"></i>
+        <a class="result-link" data="{{ result.id }}" href="#">{{ result.name }}  <span class="badge">{{ result.valid_reports.count }}</span></a> -
+        <a class="fa fa-ban" href="{% url 'result_ignore' result.id %}"></a>
+        <div class="collapse" id="result-{{ result.id }}"></div>
     </li>
-
     {% endfor %}
-
 </ul>
-
-{% endblock %}

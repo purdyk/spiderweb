@@ -1,22 +1,28 @@
 {% extends "spiderlist/base.html" %}
+{% load admin_static %}
 
 {% block title %}
 SpiderWeb
 {% endblock %}
 
 
-
 {% block content %}
 
-<ul>
+<ul class="group-list fa-ul">
 
     {% for group in groups %}
     <li>
-        <a href="{% url 'group_detail' group.id %}">{{ group.name|title }} - {{ group.valid_results.count }}</a> -
-        <a href="{% url 'group_refresh' group.id %}"> refresh</a>
+        <i class="fa-li fa fa-heartbeat"></i>
+        <a class="group-link" data="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a> -
+        <a class="fa fa-refresh" href="{% url 'group_refresh' group.id %}"></a>
+        <div class="collapse" id="group-{{ group.id }}"></div>
     </li>
     {% endfor %}
 
 </ul>
 
+{% endblock %}
+
+{% block extrascript %}
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}
