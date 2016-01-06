@@ -156,7 +156,7 @@ class SearchResult(models.Model):
 
     def clean_name(self):
         start = self.name.find(self.date_key)
-        end = self.name.lower().index("xxx")
+        end = self.name.lower().find("xxx")
 
         if start > 0:
             start += len(self.date_key)
