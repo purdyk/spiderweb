@@ -99,7 +99,7 @@ class SearchGroup(models.Model):
         new_results = []
 
         for each in found:
-            results = SearchResult.objects.filter(date_key=each.date_key(), group=self)
+            results = self.searchresult_set.filter(date_key=each.date_key())
 
             if len(results) == 0:
                 result = SearchResult(
