@@ -1,7 +1,7 @@
 {% for result in results %}
 <div class="card card-pad">
     <i class="fa fa-archive fa-2x"></i>
-    <a class="result-link" data="{{ result.id }}" href="#">{{ result.clean_name }}  <span class="badge">{{ result.valid_reports.count }}</span></a> -
+    <a class="result-link" data-target="{{ result.id }}" href="#">{{ result.clean_name }}  <span class="badge">{{ result.valid_reports.count }}</span></a> -
     <a class="fa fa-ban" href="{% url 'result_ignore' result.id %}"></a>
 </div>
 

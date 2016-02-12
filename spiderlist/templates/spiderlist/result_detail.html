@@ -1,6 +1,6 @@
 {% for report in reports %}
 <div class="card card-pad">
     <i class="fa fa-film fa-2x"></i>
-    <a href="{% url 'report_fetch' report.id %}">{{ report.name }} - {{ report.size|filesizeformat }}</a>
+    <a class="report-fetch-link" data-target="{{ report.id }}" name="{{ report.name }}" href="#">{{ report.name }} - {{ report.size|filesizeformat }}</a>
 </div>
 {% endfor %}

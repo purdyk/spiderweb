@@ -10,11 +10,26 @@ SpiderWeb
 
 {% for group in groups %}
 <div class="card card-pad">
-    <a class="group-link" data="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a> -
-    <a class="fa fa-refresh" href="{% url 'group_refresh' group.id %}"></a>
+    <a class="group-link" data-target="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a>
+    -
+    <a class="fa fa-refresh group-refresh-link" data-target="{{ group.id }}" name="{{ group.name|title }}" href="#"></a>
 </div>
 <div class="collapse group" id="group-{{ group.id }}"></div>
 {% endfor %}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="dialog-dismiss" type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="dialog-title"></h4>
+            </div>
+            <div class="modal-body" id="dialog-content">
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 

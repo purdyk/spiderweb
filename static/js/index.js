@@ -1,10 +1,11 @@
 var res_load = function() {
-  debugger;
-  var resId = this.attributes['data'].value;
+  var resId = this.attributes['data-target'].value;
   var target = $('#result-' + resId);
   if (target.children().length == 0) {
     target.collapse('show');
-    target.load('results/' + resId);
+    target.load('results/' + resId, function() {
+      $('#result-' +resId + ' .report-fetch-link').click(report_fetch);
+    });
   } else {
     target.toggle();
   }
@@ -12,7 +13,7 @@ var res_load = function() {
 };
 
 var group_load = function () {
-  var id = this.attributes['data'].value;
+  var id = this.attributes['data-target'].value;
   var target = $('#group-' + id);
   if (target.children().length == 0) {
     target.collapse('show');
@@ -25,4 +26,51 @@ var group_load = function () {
   return false;
 }
 
+var group_refresh = function () {
+  var id = this.attributes['data-target'].value;
+  var title = $('#dialog-title');
+  var content = $('#dialog-content');
+  var name = this.attributes['name'].value;
+
+  title.text("Refreshing: " + name);
+  show_dialog();
+  disable_close();
+  content.load("groups/" + id + "/refresh", function() {
+    enable_close();
+    title.text("Refresh Complete: " + name);
+  });
+
+  return false;
+}
+
+var report_fetch = function () {
+  var id = this.attributes['data-target'].value;
+  var title = $('#dialog-title');
+  var content = $('#dialog-content');
+  var name = this.attributes['name'].value;
+
+  title.text("Enqueuing: " + name);
+  disable_close();
+  show_dialog();
+  content.load("reports/" + id + "/fetch", function() {
+    enable_close();
+    title.text("Enqueued: " + name);
+  });
+
+  return false;
+}
+
+var show_dialog = function() {
+  $('#dialog').modal()
+}
+
+var disable_close = function() {
+  $('#dialog-dismiss').prop('disabled', true)
+}
+
+var enable_close = function() {
+  $('#dialog-dismiss').prop('disabled', false)
+}
+
 $('.group-link').click(group_load);
+$('.group-refresh-link').click(group_refresh);
