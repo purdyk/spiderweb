@@ -28,17 +28,10 @@ class SearchGroup(models.Model):
     def __str__(self):
         return self.name
 
-    def refresh(self):
+    def refresh_files(self):
         date_matcher = re.compile("(\d\d)?(\d\d)[^\d]?(\d\d)[^\d]?(\d\d)")
-
-        nabapi = NabAPI.NabAPI(date_matcher)
         spider = FCSpider.FileSpider(date_matcher)
-
-        complete = False
-        found = []
         new_files = []
-        offset = 0
-
         query = self.search_string
 
         have = spider.build_file_list(query)
@@ -70,7 +63,16 @@ class SearchGroup(models.Model):
 
                 result.save()
 
-        query = [query]
+        return new_files
+
+    def refresh_nab(self):
+        date_matcher = re.compile("(\d\d)?(\d\d)[^\d]?(\d\d)[^\d]?(\d\d)")
+        query = [self.search_string]
+        nabapi = NabAPI.NabAPI(date_matcher)
+
+        complete = False
+        found = []
+        offset = 0
 
         if len(self.additional_parameters) > 0:
             for each in self.additional_parameters.split(' '):
@@ -122,7 +124,14 @@ class SearchGroup(models.Model):
             report.save()
             new_reports.append(report)
 
-        return dict(group=self, reports=new_reports, results=new_results, files=new_files)
+        return dict(reports=new_reports, results=new_results)
+
+    def refresh(self):
+        new_files = self.refresh_files()
+        result = self.refresh_nab()
+        result['group'] = self
+        result['files'] = new_files
+        return result
 
 
 class MatchedFile(models.Model):
@@ -187,4 +196,3 @@ class Report(models.Model):
 
     def enq_url(self):
         return "%s/api?t=get&id=%s&apikey=%s" % (settings.NEWZNAB_URL, self.guid, settings.NEWZNAB_KEY)
-
