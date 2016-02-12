@@ -8,6 +8,7 @@ var res_load = function() {
   } else {
     target.toggle();
   }
+  return false;
 };
 
 var group_load = function () {
@@ -19,8 +20,9 @@ var group_load = function () {
       $('#group-' + id + ' .result-link').click(res_load);
     });
   } else {
-    target.toggle()
+    target.toggle();
   }
+  return false;
 }
 
 $('.group-link').click(group_load);
