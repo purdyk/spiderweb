@@ -12,6 +12,20 @@ var res_load = function() {
   return false;
 };
 
+var res_ignore = function() {
+  var resId = this.attributes['data-target'].value;
+  var groupId = this.attributes['data-toggle'].value;
+  var target = $('#group-' + groupId);
+  var targetL = $('#group-refresh-' + groupId);
+
+  jQuery.ajax('results/' + resId + '/ignore').done(function(data) {
+    target.children().remove();
+    targetL.click();
+  });
+
+  return false;
+}
+
 var group_load = function () {
   var id = this.attributes['data-target'].value;
   var target = $('#group-' + id);
@@ -19,6 +33,7 @@ var group_load = function () {
     target.collapse('show');
     target.load("groups/" + id, function() {
       $('#group-' + id + ' .result-link').click(res_load);
+      $('#group-' + id + ' .result-ignore').click(res_ignore);
     });
   } else {
     target.toggle();

@@ -10,7 +10,7 @@ SpiderWeb
 
 {% for group in groups %}
 <div class="card card-pad">
-    <a class="group-link" data-target="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a>
+    <a id="group-refresh-{{ group.id }}" class="group-link" data-target="{{ group.id }}" href="#">{{ group.name|title }} <span class="badge">{{ group.valid_results.count }}</span></a>
     -
     <a class="fa fa-refresh group-refresh-link" data-target="{{ group.id }}" name="{{ group.name|title }}" href="#"></a>
 </div>
