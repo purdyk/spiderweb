@@ -49,7 +49,7 @@ class SearchGroup(models.Model):
                 file.save()
                 new_files.append(file)
 
-                results = SearchResult.objects.filter(date_key=date)
+                results = self.searchresult_set.filter(date_key=date)
                 if len(results) == 0:
                     result = SearchResult(
                         group=self,
