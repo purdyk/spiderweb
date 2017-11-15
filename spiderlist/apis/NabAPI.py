@@ -27,7 +27,10 @@ class NabAPI:
         with urllib.request.urlopen(finurl) as fh:
             data = json.loads(fh.read().decode('utf-8'))
 
-            for thing in data:
+            if not 'item' in data:
+                return []
+
+            for thing in data['item']:
                 if not isinstance(thing, dict):
                     continue
 
@@ -45,15 +48,19 @@ class NabResult:
 
     def __init__(self, attrs):
         self.attrs = attrs
+        self.sze = None
 
     def size(self):
-        return self.attrs['size']
+        if self.sze == None:
+            self.sze = self.findAttr('size')
+
+        return self.sze
 
     def title(self):
-        return self.attrs['searchname']
+        return self.attrs['title']
 
     def guid(self):
-        return self.attrs['guid']
+        return self.attrs['guid']['text'].split('/')[-1]
 
     def date_key(self):
         return self.attrs['date_key']
@@ -63,3 +70,9 @@ class NabResult:
 
     def __str__(self):
         return "{0}  --  {1}".format(self.title(), self.size_s)
+    
+    def findAttr(self, attr):
+        for each in self.attrs['newznab:attr']:
+            if (each['_name'] == attr):
+                return each['_value']
+        return None
