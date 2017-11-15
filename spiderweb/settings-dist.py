@@ -28,8 +28,12 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Our Settings
+NAB_SERVERS = [{"url": "https://example.com", "key": "MY_SECRET_KEY"}]
+
+## LEGACY will be migrated can be removed after migration
 NEWZNAB_KEY = ""
 NEWZNAB_URL = "https://example.com/"
+
 SABNZBD_KEY = ""
 SABNZBD_URL = "http://example.com:8080"
 BASE_DIRECT = "/path/to/files/"

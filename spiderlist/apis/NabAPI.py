@@ -6,8 +6,10 @@ import json
 
 
 class NabAPI:
-    def __init__(self, filter_re):
+    def __init__(self, filter_re, url, apikey):
         self.filter = filter_re
+        self.url = url
+        self.apikey = apikey
 
     def do_search(self, match_spec, offset):
         results = []
@@ -15,17 +17,22 @@ class NabAPI:
         q = "+".join(match_spec)
 
         params = {
-            "apikey": settings.NEWZNAB_KEY,
+            "apikey": self.apikey,
             "t": "search",
             "o": "json",
             "q": q,
             "cat": "6000",
             "offset": offset}
         print("Match Spec: %s" % (q))
-        finurl = "%s/api?%s" % (settings.NEWZNAB_URL, urllib.parse.urlencode(params))
+        finurl = "%s/api?%s" % (self.url, urllib.parse.urlencode(params))
         print("Fetching: %s" % finurl)
         with urllib.request.urlopen(finurl) as fh:
             data = json.loads(fh.read().decode('utf-8'))
+            version = 1
+
+            if 'channel' in data:
+                data = data['channel']
+                version = 2
 
             if not 'item' in data:
                 return []
@@ -34,7 +41,7 @@ class NabAPI:
                 if not isinstance(thing, dict):
                     continue
 
-                result = NabResult(thing)
+                result = NabResult(thing, version)
                 match = self.filter.search(result.title())
 
                 if match:
@@ -46,9 +53,10 @@ class NabAPI:
 
 class NabResult:
 
-    def __init__(self, attrs):
+    def __init__(self, attrs, version):
         self.attrs = attrs
         self.sze = None
+        self.version = version
 
     def size(self):
         if self.sze == None:
@@ -60,7 +68,10 @@ class NabResult:
         return self.attrs['title']
 
     def guid(self):
-        return self.attrs['guid']['text'].split('/')[-1]
+        if self.version == 1:
+            return self.attrs['guid']['text'].split('/')[-1]
+        else:
+            return self.attrs['guid']
 
     def date_key(self):
         return self.attrs['date_key']
@@ -72,7 +83,13 @@ class NabResult:
         return "{0}  --  {1}".format(self.title(), self.size_s)
     
     def findAttr(self, attr):
-        for each in self.attrs['newznab:attr']:
-            if (each['_name'] == attr):
-                return each['_value']
+        if self.version == 1:
+            for each in self.attrs['newznab:attr']:
+                if each['_name'] == attr:
+                    return each['_value']
+        else:
+            for each in self.attrs['attr']:
+                if each['@attributes']['name'] == attr:
+                    return each['@attributes']['value']
+
         return None

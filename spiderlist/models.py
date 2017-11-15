@@ -68,39 +68,41 @@ class SearchGroup(models.Model):
     def refresh_nab(self):
         date_matcher = re.compile("(\d\d)?(\d\d)[^\d]?(\d\d)[^\d]?(\d\d)")
         query = [self.search_string]
-        nabapi = NabAPI.NabAPI(date_matcher)
 
-        complete = False
         found = []
-        offset = 0
 
         if len(self.additional_parameters) > 0:
             for each in self.additional_parameters.split(' '):
                 query.append(each)
 
-        while not complete:
-            print("Doing Search ", offset)
-            incoming = nabapi.do_search(query, offset)
+        for api_params in settings.NAB_SERVERS:
+            nabapi = NabAPI.NabAPI(date_matcher, api_params['url'], api_params['key'])
+            complete = False
+            offset = 0
 
-            if len(incoming) == 0:
-                complete = True
+            while not complete:
+                print("Doing Search ", offset)
+                incoming = nabapi.do_search(query, offset)
 
-            for each in incoming:
-                print("Processing raw result guid: ", each.guid())
-                reports = Report.objects.filter(guid=each.guid())
-
-                if len(reports) == 0:
-                    found.append(each)
-                else:
+                if len(incoming) == 0:
                     complete = True
-                    break
 
-            offset += 100
+                for each in incoming:
+                    print("Processing raw result guid: ", each.guid())
+                    reports = Report.objects.filter(guid=each.guid(), url=nabapi.url)
+
+                    if len(reports) == 0:
+                        found.append((each, api_params))
+                    else:
+                        complete = True
+                        break
+
+                offset += 100
 
         new_reports = []
         new_results = []
 
-        for each in found:
+        for (each, api_params) in found:
             results = self.searchresult_set.filter(date_key=each.date_key())
 
             if len(results) == 0:
@@ -119,6 +121,8 @@ class SearchGroup(models.Model):
                 name=each.title(),
                 size=each.size(),
                 guid=each.guid(),
+                url=api_params['url'],
+                key=api_params['key']
             )
             report.raw = json.dumps(each.attrs)
             report.save()
@@ -190,9 +194,11 @@ class Report(models.Model):
     size = models.IntegerField(default=0)
     guid = models.CharField(max_length=100, db_index=True)
     raw = models.TextField
+    url = models.CharField(max_length=400, default=settings.NEWZNAB_URL)
+    key = models.CharField(max_length=40, default=settings.NEWZNAB_KEY)
 
     def __str__(self):
         return self.name
 
     def enq_url(self):
-        return "%s/api?t=get&id=%s&apikey=%s" % (settings.NEWZNAB_URL, self.guid, settings.NEWZNAB_KEY)
+        return "%s/api?t=get&id=%s&apikey=%s" % (self.url, self.guid, self.key)
