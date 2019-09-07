@@ -48,6 +48,7 @@ var group_refresh = function () {
   var name = this.attributes['name'].value;
 
   title.text("Refreshing: " + name);
+  content.text("")
   show_dialog();
   disable_close();
   content.load("groups/" + id + "/refresh", function() {
@@ -65,6 +66,7 @@ var report_fetch = function () {
   var name = this.attributes['name'].value;
 
   title.text("Enqueuing: " + name);
+  content.text("")
   disable_close();
   show_dialog();
   content.load("reports/" + id + "/fetch", function() {

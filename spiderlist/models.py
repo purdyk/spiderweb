@@ -194,8 +194,8 @@ class Report(models.Model):
     size = models.IntegerField(default=0)
     guid = models.CharField(max_length=100, db_index=True)
     raw = models.TextField
-    url = models.CharField(max_length=400, default=settings.NEWZNAB_URL, db_index=True)
-    key = models.CharField(max_length=40, default=settings.NEWZNAB_KEY)
+    url = models.CharField(max_length=400, default=settings.NAB_SERVERS[0]['url'], db_index=True)
+    key = models.CharField(max_length=40, default=settings.NAB_SERVERS[0]['key'])
 
     class Meta:
         index_together = ['guid', 'url']

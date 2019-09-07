@@ -26,7 +26,8 @@ class NabAPI:
         print("Match Spec: %s" % (q))
         finurl = "%s/api?%s" % (self.url, urllib.parse.urlencode(params))
         print("Fetching: %s" % finurl)
-        with urllib.request.urlopen(finurl) as fh:
+        req = urllib.request.Request(finurl, headers={'User-Agent': 'SpiderWeb/1.0'})
+        with urllib.request.urlopen(req) as fh:
             data = json.loads(fh.read().decode('utf-8'))
             version = 1
 

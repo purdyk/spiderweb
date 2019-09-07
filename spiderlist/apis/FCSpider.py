@@ -14,20 +14,21 @@ class FileSpider:
     def build_file_list(self, matchSpec):
         glob_matcher = re.compile(".*" + matchSpec + ".*", re.I)
         file_list = {}
-        for root, subs, files in os.walk(settings.BASE_DIRECT):
-            for each in subs:
-                if glob_matcher.match(each):
-                    (d, fn) = self.build_tuple(each)
-                    file_list[d] = (root + '/' + fn, fn)
+        for path in settings.FILES_DIRECTORIES:
+            for root, subs, files in os.walk(path):
+                for each in subs:
+                    if glob_matcher.match(each):
+                        (d, fn) = self.build_tuple(each)
+                        file_list[d] = (root + '/' + fn, fn)
 
-            for each in files:
-                if glob_matcher.match(each):
-                    (d1, fn) = self.build_tuple(each)
-                    (d2, dirn) = self.build_tuple(root)
-                    d = d1 if len(d1) > len(d2) else d2
-                    name = fn if len(d1) > len(d2) else dirn
+                for each in files:
+                    if glob_matcher.match(each):
+                        (d1, fn) = self.build_tuple(each)
+                        (d2, dirn) = self.build_tuple(root)
+                        d = d1 if len(d1) > len(d2) else d2
+                        name = fn if len(d1) > len(d2) else dirn
 
-                    file_list[d] = (root + '/' + dirn + '/' + fn, name)
+                        file_list[d] = (root + '/' + dirn + '/' + fn, name)
 
         return file_list
 

@@ -36,7 +36,7 @@ NEWZNAB_URL = "https://example.com/"
 
 SABNZBD_KEY = ""
 SABNZBD_URL = "http://example.com:8080"
-BASE_DIRECT = "/path/to/files/"
+FILES_DIRECTORIES = ["/path/to/files/"]
 MINSIZE = 367001600
 
 # Default Overrides
