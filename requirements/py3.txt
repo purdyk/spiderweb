@@ -1,4 +1,4 @@
 Django==1.9
-Celery==3.1.20
+Celery==5.2.2
 django-celery==3.1.17
 redis==2.10.5
